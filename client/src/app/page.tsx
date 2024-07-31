@@ -12,6 +12,8 @@ function page() {
           <ProjectCard title='Corbins' date='Created 1 day ago' icon='/images/logo.png'/>
           <ProjectCard title='Test' date='Created 3 years ago' icon='/images/circle.png'/>
         </div>
+    {/* create a simple div */}
+    
     </div>
   )
 }
