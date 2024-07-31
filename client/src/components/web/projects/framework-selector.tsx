@@ -22,7 +22,7 @@ const FrameworkSelector: React.FC<FrameworkSelectorProps> = ({
     };
 
     return (
-        <div className="flex justify-between items-center w-full gap-5 mt-10">
+        <div className="flex justify-between items-center w-full gap-5">
             {frameworks.map((framework) => (
                 <div key={framework.id} className="text-center">
                     <input
