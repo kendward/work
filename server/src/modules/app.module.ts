@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApplicationConfigModule } from './config/application-config.module';
+import { V1Module } from './v1/v1.module';
 @Module({
   imports: [
     ApplicationConfigModule,
@@ -18,6 +19,7 @@ import { ApplicationConfigModule } from './config/application-config.module';
         limit: 10,
       },
     ]),
+    V1Module,
   ],
   controllers: [AppController],
   providers: [

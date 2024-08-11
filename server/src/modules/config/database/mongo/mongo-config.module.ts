@@ -1,8 +1,9 @@
 import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
-import configuration from './configuration';
-import { MongoConfigService } from './config.service';
+import { MongoConfigService } from './mongo-config.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import mongoConfig from './mongo.config';
+import { MongooseModule, MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 /**
  * Import and provide mongo configuration related classes.
  *
@@ -11,11 +12,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [configuration],
+      load: [mongoConfig],
       validationSchema: Joi.object({
         MONGO_DATABASE: Joi.string().default(''),
       }),
     }),
+    MongooseModule.forRootAsync({
+      imports: [MongoConfigModule],
+      useFactory: async (mongoConfigService: MongoConfigService) => ({
+        uri: mongoConfigService.database,
+      }),
+      inject: [MongoConfigService],
+    } as MongooseModuleAsyncOptions),
   ],
   providers: [ConfigService, MongoConfigService],
   exports: [ConfigService, MongoConfigService],

@@ -1,4 +1,4 @@
-import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import {
   ClassSerializerInterceptor,
   HttpException,
@@ -15,6 +15,8 @@ import * as express from 'express';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
+import * as passport from 'passport';
 import * as compression from 'compression';
 import { AppModule } from './modules/app.module';
 import { HttpExceptionFilter } from './modules/common/filters/http-exception.filter';
@@ -22,10 +24,12 @@ import {
   NestjsWinstonLoggerService,
   appendRequestIdToLogger,
   morganRequestLogger,
-  morganResponseLogger,
   appendIdToRequest,
 } from 'nestjs-winston-logger';
 import { format, transports } from 'winston';
+import { setupSwagger } from './modules/common/swagger';
+import { APP_ENV } from './modules/utils/constants';
+import { ExpressSessionConfigService } from './modules/config/session/session.service';
 
 export async function bootstrap(): Promise<NestExpressApplication> {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -53,23 +57,64 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   app.use(helmet());
   app.use(compression());
 
-  // Logger
+  // Express session
+  const sessionConfig: ExpressSessionConfigService = app.get(
+    ExpressSessionConfigService,
+  );
+  app.use(
+    session({
+      secret: sessionConfig.sessionSecret,
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // 1 week
+    }),
+  );
+  app.use(passport.initialize());
 
-  const loggerCombined = [format.timestamp({ format: 'isoDateTime' })];
-  if (configService.get('NODE_ENV') === 'production') {
-    loggerCombined.push(format.simple());
-  } else {
-    loggerCombined.push(format.json(), format.colorize({ all: true }));
-  }
-  const globalLogger = new NestjsWinstonLoggerService({
-    format: format.combine(...loggerCombined),
+  // Logger
+  // Define the format for console logs with color
+  const consoleFormat = format.combine(
+    format.colorize({ all: true }),
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.printf(({ timestamp, level, message, ...meta }) => {
+      return `${timestamp} [${level}]: ${message} ${
+        Object.keys(meta).length ? JSON.stringify(meta) : ''
+      }`;
+    }),
+  );
+
+  // Define the format for file logs without color
+  const fileFormat = format.combine(
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.json(),
+  );
+
+  const loggerConfig = {
+    level: 'info',
     transports: [
-      new transports.File({ filename: 'error.log', level: 'error' }),
-      new transports.File({ filename: 'combined.log' }),
-      new transports.Console(),
+      new transports.File({
+        filename: 'error.log',
+        level: 'error',
+        format: fileFormat,
+      }),
+      new transports.File({
+        filename: 'combined.log',
+        format: fileFormat,
+      }),
+      new transports.Console({
+        format: consoleFormat,
+      }),
     ],
+  };
+
+  // Create global logger
+  const globalLogger = new NestjsWinstonLoggerService({
+    ...loggerConfig,
   });
+
+  // Use the global logger in your app
   app.useLogger(globalLogger);
+
   // append id to identify request
   app.use(appendIdToRequest);
   app.use(appendRequestIdToLogger(globalLogger));
@@ -80,6 +125,11 @@ export async function bootstrap(): Promise<NestExpressApplication> {
 
   // const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new HttpExceptionFilter(configService));
+
+  // Swagger
+  if (configService.get('NODE_ENV') === APP_ENV.DEVELOPMENT) {
+    setupSwagger(app);
+  }
 
   app.setGlobalPrefix(configService.get('API_PREFIX') || '/api');
   app.useGlobalPipes(

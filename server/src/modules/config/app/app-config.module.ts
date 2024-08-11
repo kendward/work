@@ -1,8 +1,9 @@
 import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
-import configuration from './configuration';
-import { AppConfigService } from './config.service';
+import { AppConfigService } from './app-config.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import appConfig from './app.config';
+import { Services } from 'src/modules/utils/constants';
 /**
  * Import and provide app configuration related classes.
  * @module AppConfigModule
@@ -11,7 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [configuration],
+      load: [appConfig],
       validationSchema: Joi.object({
         APP_NAME: Joi.string().default(''),
         APP_ENV: Joi.string()
@@ -22,7 +23,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [ConfigService, AppConfigService],
-  exports: [ConfigService, AppConfigService],
+  providers: [
+    ConfigService,
+    {
+      provide: Services.APP_CONFIG,
+      useClass: AppConfigService,
+    },
+  ],
+  exports: [
+    ConfigService,
+    {
+      provide: Services.APP_CONFIG,
+      useClass: AppConfigService,
+    },
+  ],
 })
 export class AppConfigModule {}
