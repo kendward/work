@@ -6,9 +6,13 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "modules/v1/email/templates/**/*",
+        "include": "modules/v1/mail/templates/**/*"
+      },
+      {
+        "include": "public",
         "outDir": "dist"
       }
-    ]
+    ],
+    "watchAssets": true
   }
 }

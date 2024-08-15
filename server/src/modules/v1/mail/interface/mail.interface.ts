@@ -3,6 +3,8 @@ export interface MailSendOptions {
   cc?: string | string[];
   bcc?: string | string[];
   subject: string;
+  context: {
+    [name: string]: any;
+  };
   template: string;
-  context: Record<string, any>;
 }

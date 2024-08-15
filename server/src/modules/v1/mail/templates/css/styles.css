@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+p {
+    margin-bottom: 1rem;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+hr {
+    margin: 1.5rem 0;
+    border: 1px solid #DDDEDF;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    margin: 2rem auto 3rem;
+    display: block;
+
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.container {
+    max-width: 720px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 2rem;
+
+}
+.heading{
+    margin: 2rem 0;
+    font-weight: 400;
+    font-size: 2rem;
+    color: #282828;
+}
+.welcome{
+    width: 100%;
+}
+
+/* Register Email */
+
+.welcome .heading {
+    margin-bottom: 1rem;
+}
+
+.welcome .invitation_cards {
+    gap: 3rem;
+    margin-top: 4rem;
+}
+
+.welcome .invitation_cards .card {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    margin-bottom: 4rem;
+}
+
+.welcome .invitation_cards .card label {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.welcome .invitation_cards .card h5 {
+    font-size: 18px;
+    font-weight: 700;
+
+}
+
+.welcome .invitation_cards .card .box {
+    background-color: #CFD5DD;
+    max-width: 598.47px;
+    width: 100%;
+    height: 384.03px;
+    opacity: 0px;
+    margin: 1.5rem 0;
+}
+
+
+
+/* Reset Password */
+.reset_password {
+    max-width: 520px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+.reset_password .link_button{
+    padding: 16px 20px 16px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 300;
+    background-color: #4A7BF6;
+    text-decoration: none;
+}
+.reset_password .link_button:hover{
+    background-color: #325ece;
+}

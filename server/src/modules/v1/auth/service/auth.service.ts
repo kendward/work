@@ -222,7 +222,10 @@ export class AuthService {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-      throw new Error('There was an error sending the email. Try again later!');
+      throw new Error(
+        'There was an error sending the email. Try again later! ' +
+          error?.message,
+      );
     }
   }
 

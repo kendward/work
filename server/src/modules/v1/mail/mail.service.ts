@@ -1,16 +1,43 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailSendOptions } from './interface/mail.interface';
+import { Services } from 'src/modules/utils/constants';
+import { AppConfigService } from 'src/modules/config/app/app-config.service';
+import { join } from 'path';
+import { readFileSync } from 'fs';
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    @Inject(Services.APP_CONFIG)
+    private readonly appConfigService: AppConfigService,
+  ) {}
 
   async sendEmail(options: MailSendOptions) {
     try {
-      await this.mailerService.sendMail(options);
+      // const assetsBaseUrl =
+      //   this.appConfigService.env === APP_ENV.DEVELOPMENT
+      //     ? `${join(process.cwd(), '/src/public/assets')}`
+      //     : `${this.appConfigService.url}:${this.appConfigService.port}/assets`;
+      // console.log('assetsBaseUrl', assetsBaseUrl);
+
+      // const logoImage = await imageToBase64(
+      //   join(assetsBaseUrl, `/images/logo.png`),
+      // );
+
+      const cssPath = join(__dirname, 'templates/css', 'styles.css');
+      const cssContent = readFileSync(cssPath, 'utf-8');
+      const context = {
+        ...options.context,
+        cssContent,
+      };
+      options.context = context;
+      await this.mailerService.sendMail({
+        ...options,
+      });
       this.logger.log(
         `Email sent to ${Array.isArray(options?.to) ? JSON.stringify(options?.to) : options?.to} with subject: ${options.subject}`,
       );
@@ -23,11 +50,11 @@ export class MailService {
     }
   }
 
-  async sendWelcomeEmail(to: string | string[], name: string) {
+  async sendWelcomeEmail(to: string | string[], name?: string) {
     return this.sendEmail({
       to,
-      subject: 'Welcome to Our Platform!',
-      template: 'welcome',
+      subject: "You've signed up! Now, get set up",
+      template: './welcome',
       context: { name },
     });
   }

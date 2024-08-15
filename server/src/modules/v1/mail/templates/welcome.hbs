@@ -1,45 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Welcome To Klayd</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-
-        .header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 0.8em;
-            color: #999;
-            margin-top: 20px;
-        }
+      {{cssContent}}
     </style>
-</head>
+  </head>
 
-<body>
-    <div class="header">
-        <h1>Welcome, {{name}}!</h1>
+  <body>
+   <div class="container">
+     <div class='welcome'>
+      <div class='logo'>
+        <img src='https://iili.io/dE7ncCB.png' alt='logo' alt='image' />
+      </div>
+      <h2 class='heading'>
+        You have signed up! Now lets get set up!
+      </h2>
+      <p class='paragraph'>
+        Now that you have signed up we want to help you to set up for success.
+        Here are two things you should try:
+      </p>
+
+      <div class='invitation_cards'>
+        <div class='card'>
+          <label class='count'>01</label>
+          <h5>
+            Invite people to collaborate on UI Kit
+          </h5>
+          <div class='box'></div>
+          <p class='paragraph'>
+            Invite people to collaborate on your UI Kit. Share and work
+            together. Be on the same page and see how UI kit is built much
+            faster with more hands on deck.
+          </p>
+        </div>
+        <div class='card'>
+          <label class='count'>01</label>
+          <h5>
+            Customise your components
+          </h5>
+          <div class='box'></div>
+          <p class='paragraph'>
+            Import or customise your components. Create faster, together!
+          </p>
+        </div>
+      </div>
+      <hr />
+              <img src='https://iili.io/dEl2RAx.png' style='width: 150px;
+  margin: 2rem auto 3rem; display: block;' object-fit: cover;' />
     </div>
-    <div class="content">
-        <p>We are thrilled to have you on board.</p>
-    </div>
-    <div class="footer">
-        <p>Thank you for joining us!</p>
-    </div>
-</body>
+   </div>
+  </body>
 
 </html>
