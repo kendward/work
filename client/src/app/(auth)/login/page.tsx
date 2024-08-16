@@ -1,6 +1,9 @@
 "use client";
 import Button from '@/components/web/common/button'
 import Input from '@/components/web/common/Input'
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
+import { signIn } from 'next-auth/react';
+// import { signIn } from '@/utils/auth';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useState } from 'react'
@@ -15,9 +18,17 @@ function LoginPage() {
 
     // handle form submission
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(formData)
+        try {
+            await signIn("credentials", {
+                email: formData.email,
+                password: formData.password,
+                // redirectTo: DEFAULT_LOGIN_REDIRECT,
+            });
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // handle form input change

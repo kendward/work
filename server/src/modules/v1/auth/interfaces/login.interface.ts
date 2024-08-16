@@ -2,7 +2,7 @@ export interface SignInResponse {
   tokens: {
     accessToken: string;
     refreshToken: string;
-    expiresIn: Date;
+    expiresOn: Date;
   };
   user: {
     id: string;

@@ -2,6 +2,7 @@
 import Button from '@/components/web/common/button'
 import Checkbox from '@/components/web/common/checkbox';
 import Input from '@/components/web/common/Input'
+import AuthService from '@/services/auth.service';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useState } from 'react'
@@ -17,9 +18,28 @@ function RegisterPage() {
   })
 
   // handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match')
+      return
+    }
+
+    // make api request to register user
+    try {
+      const response = await AuthService.signUp(formData)
+      if (response.data.statusCode !== 200) {
+        alert(response.data.message)
+        return
+      }
+      alert('Account created successfully')
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // handle form input change
