@@ -154,7 +154,7 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   );
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  await app.listen(Number(configService.get('APP_PORT')));
+  await app.listen(Number(configService.get('PORT')));
 
   return app;
 }

@@ -21,7 +21,7 @@ import { Services } from 'src/modules/utils/constants';
           .valid('development', 'production')
           .default('development'),
         APP_URL: Joi.string().default('http://localhost:4000'),
-        APP_PORT: Joi.number().default(4000),
+        PORT: Joi.number().default(4000),
       }),
     }),
   ],
