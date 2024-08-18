@@ -10,6 +10,7 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { getSession } from "next-auth/react";
 import { auth } from "./auth";
+import { API_ROUTES } from "@/constants/api-routes";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -36,7 +37,7 @@ const refreshAccessToken = async () => {
     if (session && session.user.tokens.refreshToken) {
       // Make the API request with the refresh token in the headers
       const response = await api.post(
-        "/auth/refresh-token",
+        API_ROUTES.AUTH.REFRESH_TOKEN,
         {}, // No need to pass a body
         {
           headers: {

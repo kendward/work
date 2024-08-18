@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpStatus,
   Inject,
   Injectable,
@@ -29,6 +30,7 @@ import { TokenService } from '../../user/service/token.service';
 import * as argon2 from 'argon2';
 import { JwtConfigService } from 'src/modules/config/jwt/jwt-config.service';
 import { UserNotFoundException } from '../../user/exceptions/user.exceptions';
+import { InvalidTokenException } from '../exceptions/InvalidTokenException';
 
 @Injectable()
 export class AuthService {
@@ -185,23 +187,12 @@ export class AuthService {
   async forgotPassword(
     forgotPasswordDto: ForgotPwdDTO,
   ): Promise<ResponseOut<ForgotPwdResponse>> {
-    const { email } = forgotPasswordDto;
-    if (!email) {
-      return {
-        statusCode: 400,
-        status: 'fail',
-        message: 'Please provide an email',
-      };
-    }
-
-    const user: any = await this.usersService.findOneByEmail(email);
+    const user: any = await this.usersService.findOneByEmail(
+      forgotPasswordDto.email,
+    );
 
     if (!user) {
-      return {
-        statusCode: 404,
-        status: 'fail',
-        message: 'User not found',
-      };
+      throw new UserNotFoundException();
     }
 
     const resetToken = user.createPasswordResetToken();
@@ -211,18 +202,16 @@ export class AuthService {
 
     try {
       await this.mailService.sendPasswordResetEmail(user.email, resetURL);
-
       return {
         statusCode: 200,
         status: 'success',
         message: 'Token sent to email',
-        data: { token: resetToken },
       };
     } catch (error) {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-      throw new Error(
+      throw new BadRequestException(
         'There was an error sending the email. Try again later! ' +
           error?.message,
       );
@@ -230,22 +219,16 @@ export class AuthService {
   }
 
   async resetPassword(
-    token: string,
     resetPasswordDto: ResetPasswordDTO,
   ): Promise<ResponseOut<null>> {
+    const { token } = resetPasswordDto;
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const user: UserDocument[] = await this.usersService.find({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
     });
 
-    if (!user[0]) {
-      return {
-        statusCode: 400,
-        status: 'fail',
-        message: 'Token is invalid or has expired',
-      };
-    }
+    if (!user[0]) throw new InvalidTokenException();
 
     user[0].password = resetPasswordDto.password;
     user[0].passwordResetToken = undefined;

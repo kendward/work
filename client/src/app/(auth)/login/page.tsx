@@ -1,38 +1,62 @@
 "use client";
+import { login } from '@/actions/auth';
 import Button from '@/components/web/common/button'
 import Input from '@/components/web/common/Input'
+import { WEB_ROUTES } from '@/constants/pages-routes';
+import useToaster from '@/hooks/useToaster';
+import useToast from '@/hooks/useToaster';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { signIn } from 'next-auth/react';
-// import { signIn } from '@/utils/auth';
+import { cn } from '@/utils';
 import Image from 'next/image'
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useState, useTransition } from 'react'
 
 function LoginPage() {
 
-    // login form state
+    // use state hooks
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     })
 
-    // handle form submission
+    // other hooks
+    const [isPending, startTransition] = useTransition();
 
+
+    // custom hooks
+    const { showError, showSuccess } = useToaster()
+
+
+    /**
+     * handle form submission for login
+     * @param e  form event
+     * @returns  void
+     */
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        try {
-            await signIn("credentials", {
-                email: formData.email,
-                password: formData.password,
-                // redirectTo: DEFAULT_LOGIN_REDIRECT,
-            });
-        } catch (error) {
-            console.log(error)
+
+        if (!formData.email || !formData.password) {
+            showError('All fields are required')
+            return
         }
+
+        startTransition(() => login(formData, DEFAULT_LOGIN_REDIRECT).then((res) => {
+            if (res.error) return showError(res.message as string)
+            showSuccess('Login successfully');
+            setTimeout(() => {
+                window.location.href = DEFAULT_LOGIN_REDIRECT
+            }, 2000)
+        }).catch((err) => {
+            showError(err.message)
+        }));
     }
 
-    // handle form input change
 
+    /**
+     * handle form input change
+     * @param e  input change event
+     * @returns void
+     */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
@@ -53,10 +77,10 @@ function LoginPage() {
                 <h4 className='text-2xl font-medium text-center my-4 text-clr-dark-primary'>Sign in Klayd</h4>
 
                 {/* email input */}
-                <Input name='email' type='text' placeholder='E-mail Address' value={formData.email} onChange={handleChange} className='my-2' />
+                <Input name='email' type='text' placeholder='E-mail Address' value={formData.email} onChange={handleChange} className='my-2' disabled={isPending} />
 
                 {/* password input */}
-                <Input name='password' type='password' placeholder='Password' value={formData.password} onChange={handleChange} className='my-2' />
+                <Input name='password' type='password' placeholder='Password' value={formData.password} onChange={handleChange} className='my-2' disabled={isPending} />
 
                 {/* forget password link */}
                 <div className='text-right w-full my-2'>
@@ -64,7 +88,7 @@ function LoginPage() {
                 </div>
 
                 {/* submit button */}
-                <Button type='submit' className='mt-2'>Continue</Button>
+                <Button type='submit' className={cn("mt-2", isPending ? "bg-blue-800" : "")} disabled={isPending}>{isPending ? "Signing in" : "Continue"}</Button>
 
                 <p className='text-md mt-10 font-semibold'>New User? <Link href='/register' className='text-clr-blue-primary'>Create an Account</Link></p>
             </form>

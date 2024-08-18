@@ -3,7 +3,6 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
-  Param,
   Patch,
   Post,
   Req,
@@ -92,7 +91,7 @@ export class AuthController {
     return await this.authService.refreshToken(req.user.id);
   }
 
-  @Post('forgot')
+  @Post('forgot-password')
   @ApiOkResponse({
     description: 'Sends a reset password link to user email',
     type: ResponseOut<ForgotPwdResponse>,
@@ -108,25 +107,21 @@ export class AuthController {
     return result;
   }
 
-  @Patch(':token')
+  @Patch('reset-password')
   @ApiOkResponse({
     description: 'Reset password of user',
     type: ResponseOut<any>,
   })
-  @ApiOperation({ summary: 'Resource for sign in user.' })
+  @ApiOperation({ summary: 'Resource for reset user password' })
   @ApiBody({
     description: 'New password',
     type: ResetPasswordDTO,
   })
   async resetPassword(
-    @Param('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDTO,
   ): Promise<ResponseOut<any>> {
     console.log('resetPasswordDto', resetPasswordDto);
-    const result = await this.authService.resetPassword(
-      token,
-      resetPasswordDto,
-    );
+    const result = await this.authService.resetPassword(resetPasswordDto);
     return result;
   }
 

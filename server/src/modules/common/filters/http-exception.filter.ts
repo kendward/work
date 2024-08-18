@@ -19,26 +19,32 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
-    const error = exception.getResponse() as {
-      message: string;
-      errors: string;
-    };
+    const exceptionResponse = exception.getResponse();
+
+    let message: string | object;
+
+    if (typeof exceptionResponse === 'string') {
+      message = { message: exceptionResponse };
+    } else if (Array.isArray(exceptionResponse)) {
+      message = { message: exceptionResponse.join(', ') };
+    } else if (typeof exceptionResponse === 'object') {
+      message = exceptionResponse;
+    } else {
+      message = { message: exception.message };
+    }
 
     const isProduction =
       this.configService.get<string>('NODE_ENV') === APP_ENV.PRODUCTION;
 
     const devErrorResponse = {
       statusCode: status,
-      // timestamp: new Date().toISOString(),
       message: exception.message,
-      // stacktrace: exception.stack,
-      ...error,
+      ...message,
     };
 
     const prodErrorResponse = {
       statusCode: status,
-      // timestamp: new Date().toISOString(),
-      ...error,
+      ...message,
     };
 
     if (!isProduction) {

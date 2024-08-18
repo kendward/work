@@ -2,6 +2,7 @@ import NextAuth, { AuthError, type DefaultSession } from "next-auth";
 import AuthService from "@/services/auth.service";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { ISignInBody } from "../../types/request-body";
 
 export const {
   handlers: { GET, POST },
@@ -12,16 +13,13 @@ export const {
   providers: [
     Credentials({
       async authorize(credentials) {
-        const { email, password } = credentials;
+        const body: Partial<ISignInBody> = credentials as Partial<ISignInBody>;
         try {
-          const response = await AuthService.signIn({ email, password });
-          if (response.data.statusCode !== 200) {
-            throw new Error(response.data.message || "Invalid credentials!");
-          }
+          const response = await AuthService.signIn(body);
           const data = response.data.data;
           return { ...data.user, tokens: { ...data.tokens } };
         } catch (error: any) {
-          throw new AuthError(error.message);
+          return Promise.reject(new AuthError(error?.response?.data?.message));
         }
       },
     }),

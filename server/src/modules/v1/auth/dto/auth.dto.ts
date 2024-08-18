@@ -121,6 +121,15 @@ export class ResetPasswordDTO {
   @IsStrongPassword({}, { message: 'Password must be a strong password' })
   @MaxLength(20)
   password: string;
+
+  @ApiProperty({
+    example: 'token',
+    description: 'The token of the user',
+    required: true,
+  })
+  @IsString({ message: 'Token must be a string' })
+  @IsNotEmpty({ message: 'Token is required' })
+  token: string;
 }
 
 export class RefreshTokenResponse {

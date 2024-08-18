@@ -1,53 +1,70 @@
 "use client";
+import { register } from '@/actions/auth';
 import Button from '@/components/web/common/button'
 import Checkbox from '@/components/web/common/checkbox';
 import Input from '@/components/web/common/Input'
+import { WEB_ROUTES } from '@/constants/pages-routes';
+import useToaster from '@/hooks/useToaster';
 import AuthService from '@/services/auth.service';
+import { cn } from '@/utils';
 import Image from 'next/image'
 import Link from 'next/link';
-import React, { useState } from 'react'
+import { useRouter } from 'next/navigation';
+import React, { useState, useTransition } from 'react'
 
 function RegisterPage() {
 
-  // manage form state
+  // use state hooks
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    acceptPolicy: false,
+    keepMeUpdated: false
   })
 
-  // handle form submission
+  // other hooks
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter()
+
+  // custom hooks
+  const { showSuccess, showError } = useToaster()
+
+  /**
+   * handle form submission for registration
+   * @param e  form event
+   * @returns  void
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match')
+      showError('Passwords do not match')
       return
     }
 
-    // make api request to register user
-    try {
-      const response = await AuthService.signUp(formData)
-      if (response.data.statusCode !== 200) {
-        alert(response.data.message)
-        return
-      }
-      alert('Account created successfully')
+    startTransition(() => register(formData).then((res) => {
+      if (res.error) return showError(res.message as string)
+      showSuccess(res.message as string);
       setTimeout(() => {
-        window.location.href = '/login'
-      }, 1000)
-
-    } catch (error) {
-      console.log(error)
-    }
+        router.push(WEB_ROUTES.LOGIN)
+      }, 2000)
+    }).catch((err) => {
+      showError(err.message)
+    }));
   }
 
-  // handle form input change
 
+  /**
+   * handle form input change
+   * @param e  input change event
+   * @returns void
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
     })
   }
 
@@ -77,14 +94,15 @@ function RegisterPage() {
 
         {/* terms and conditions */}
         <div className="my-6 flex flex-col gap-3">
-          <Checkbox label={<span className='font-semibold'>
+          <Checkbox name="acceptPolicy" label={<span className='font-semibold'>
             I&apos;ve read and agree to the <Link href='/terms' className='text-clr-blue-primary'>Terms of Service</Link> and <Link href='/privacy' className='text-clr-blue-primary'>Privacy Policy</Link>
-          </span>} checked={false} onChange={handleChange} className='text-left text-md text-black' />
-          <Checkbox label="Keep me updated on news from Klayd" checked={false} onChange={handleChange} className='text-left text-md text-black font-semibold' />
+          </span>} checked={formData.acceptPolicy} onChange={handleChange} className='text-left text-md text-black' />
+
+
+          <Checkbox name="keepMeUpdated" label="Keep me updated on news from Klayd" checked={formData.keepMeUpdated} onChange={handleChange} className='text-left text-md text-black font-semibold' />
         </div>
 
-
-        <Button type='submit' className='mt-2 '>Register</Button>
+        <Button type='submit' className={cn("mt-2", isPending ? "bg-blue-800" : "")} disabled={isPending || !formData.acceptPolicy}>Register</Button>
 
         {/* already have an account */}
         <p className='text-md mt-6 font-semibold'>Already have an Klayd account? <Link href='/login' className='text-clr-blue-primary'>Sign in</Link></p>
