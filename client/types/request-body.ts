@@ -13,6 +13,10 @@ export interface IForgotPasswordBody {
   email: string;
 }
 
+export interface IVerifyEmailBody {
+  email: string;
+}
+
 export interface IResetPasswordBody {
   password: string;
   token: string;

@@ -17,6 +17,7 @@ import {
   ResetPasswordDTO,
   SignInDTO,
   SignUpDTO,
+  VerifyEmailDTO,
 } from '../dto/auth.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { ResponseOut } from 'src/modules/common/interfaces/response.interface';
@@ -41,6 +42,20 @@ import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    description: 'Verify email of user',
+    type: ResponseOut<any>,
+  })
+  @ApiBody({
+    description: 'Email of user',
+    type: VerifyEmailDTO,
+  })
+  async verifyEmail(@Body() body: any): Promise<ResponseOut<any>> {
+    return await this.authService.verifyEmail(body);
+  }
 
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)

@@ -110,6 +110,19 @@ export class ForgotPwdDTO {
   @IsEmail({}, { message: 'Email must be a valid email' })
   email: string;
 }
+
+export class VerifyEmailDTO {
+  @ApiProperty({
+    example: 'example@email.com',
+    description: 'The email of the user',
+    required: true,
+  })
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsString({ message: 'Email must be a string' })
+  @IsEmail({}, { message: 'Email must be a valid email' })
+  email: string;
+}
+
 export class ResetPasswordDTO {
   @ApiProperty({
     example: 'password123',

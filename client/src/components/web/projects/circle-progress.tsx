@@ -6,8 +6,8 @@ interface CircleProgressProps {
 }
 
 const CircleProgress: React.FC<CircleProgressProps> = ({ progress, color }) => {
-    const radius = 58;
-    const stroke =9;
+    const radius = 48;
+    const stroke = 8;
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
     const strokeDashoffset = circumference - (progress / 100) * circumference;

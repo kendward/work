@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 function CreateProjectForm() {
     const [step, setStep] = useState(1)
-    const [selectedPace, setSelectedPace] = useState<string>('medium');
+    const [selectedPace, setSelectedPace] = useState<"figma" | "creation">('figma');
     const [isToggleOn, setIsToggleOn] = useState<boolean>(false);
 
     const frameworks = [
@@ -27,8 +27,13 @@ function CreateProjectForm() {
         setStep(step <= 1 ? 1 : step - 1)
     }
 
-    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedPace(e.target.id);
+    const handlePaceSelect = (pace: "figma" | "creation") => {
+        setSelectedPace(pace);
+        if (pace === "figma") {
+            setStep(3);
+        } else {
+            setStep(4);
+        }
     };
 
     const handleToggleChange = (isOn: boolean) => {
@@ -54,7 +59,7 @@ function CreateProjectForm() {
                                     <div className="flex-1">
                                         <input type="text" className='w-full px-2 py-2 text-xl md:text-3xl border-b-1 border-b-clr-blue-primary border-spacing-2 outline-none font-light' />
                                     </div>
-                                    <div className="w-[60px] h-[60px] md:w-[110px] md:h-[110px] rounded-full flex justify-center items-center bg-white text-lg md:text-3xl border-1 border-clr-light-gray text-clr-light-gray font-extralight cursor-pointer hover:bg-clr-blue-primary hover:text-white hover:border-transparent" onClick={handleNext}>Go</div>
+                                    <div className="w-[60px] h-[60px] md:w-[90px] md:h-[90px] rounded-full flex justify-center items-center bg-white text-lg md:text-2xl border-1 border-clr-light-gray text-clr-light-gray font-extralight cursor-pointer hover:bg-clr-blue-primary hover:text-white hover:border-transparent" onClick={handleNext}>Go</div>
                                 </div>
                             </div>
                         )}
@@ -65,44 +70,22 @@ function CreateProjectForm() {
                                 <h2 className='text-2xl md:text-4xl font-light'>Great title! The next step adapts to your current pace.</h2>
 
                                 <div className="flex items-center flex-wrap gap-5 mt-6">
-                                    <div className="">
-                                        <input
-                                            type="radio"
-                                            name="pace"
-                                            id="slow"
-                                            className="hidden"
-                                            onChange={handleRadioChange}
-                                            checked={selectedPace === 'slow'}
-                                        />
-                                        <label
-                                            htmlFor="slow"
-                                            className={`px-4 md:px-8 py-2 flex items-center justify-center cursor-pointer rounded-full ${selectedPace === 'slow'
-                                                ? 'bg-clr-blue-primary text-white'
-                                                : 'bg-white border-2 border-clr-blue-primary text-black'
-                                                }`}
-                                        >
-                                            <p className="text-lg font-light">Process with creation</p>
-                                        </label>
-                                    </div>
-                                    <div className="">
-                                        <input
-                                            type="radio"
-                                            name="pace"
-                                            id="medium"
-                                            className="hidden"
-                                            onChange={handleRadioChange}
-                                            checked={selectedPace === 'medium'}
-                                        />
-                                        <label
-                                            htmlFor="medium"
-                                            className={`px-4 md:px-8 py-2 flex items-center justify-center cursor-pointer rounded-full ${selectedPace === 'medium'
-                                                ? 'bg-clr-blue-primary text-white'
-                                                : 'bg-white border-2 border-clr-blue-primary text-black'
-                                                }`}
-                                        >
-                                            <p className="text-lg font-light">Import from Figma</p>
-                                        </label>
-                                    </div>
+                                    <label
+                                        htmlFor="slow"
+                                        className={`px-4 md:px-8 py-2 flex items-center flex-grow md:flex-grow-0 justify-center cursor-pointer rounded-full bg-white border-2 border-clr-blue-primary text-black`}
+                                        onClick={() => handlePaceSelect("creation")}
+                                    >
+                                        <p className="text-lg font-light">Process with creation</p>
+                                    </label>
+
+
+                                    <label
+                                        htmlFor="medium"
+                                        className={`px-4 md:px-8 py-2 flex items-center justify-center flex-grow md:flex-grow-0 cursor-pointer rounded-full bg-clr-blue-primary text-white`}
+                                        onClick={() => handlePaceSelect("figma")}
+                                    >
+                                        <p className="text-lg font-light">Import from Figma</p>
+                                    </label>
                                 </div>
                             </div>
                         )}

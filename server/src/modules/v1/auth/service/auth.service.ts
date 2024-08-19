@@ -17,6 +17,7 @@ import {
   ResetPasswordDTO,
   SignInDTO,
   SignUpDTO,
+  VerifyEmailDTO,
 } from '../dto/auth.dto';
 import { SignInResponse } from '../interfaces/login.interface';
 import { UserAlreadyExistsException } from '../exceptions/UserAlreadyExistsException';
@@ -31,6 +32,7 @@ import * as argon2 from 'argon2';
 import { JwtConfigService } from 'src/modules/config/jwt/jwt-config.service';
 import { UserNotFoundException } from '../../user/exceptions/user.exceptions';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
+import { EmailNotFoundException } from '../exceptions/EmailNotFound';
 
 @Injectable()
 export class AuthService {
@@ -55,6 +57,18 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async verifyEmail(body: VerifyEmailDTO): Promise<ResponseOut<any>> {
+    const user: any = await this.usersService.findOneByEmail(body.email);
+    if (!user) {
+      throw new EmailNotFoundException();
+    }
+    return {
+      statusCode: 200,
+      status: 'success',
+      message: 'Email found!',
+    };
   }
 
   async signUp(signupDto: SignUpDTO): Promise<ResponseOut<any>> {

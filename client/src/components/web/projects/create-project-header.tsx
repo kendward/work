@@ -8,8 +8,9 @@ function CreateProjectHeader() {
             <div className="flex justify-between items-center">
                 <Link href={"/"}>
                     <div className="flex items-center gap-2">
-                        <Image src={"/images/svg/klayd-logo-colored.svg"} width={24} height={24} alt='logo' />
-                        <span className="text-lg font-medium">Klayd</span>
+                        <div className='relative w-28 h-10'>
+                        <Image src={"/images/klayd-logo-colored.png"} fill objectFit='cover' alt='logo' />
+                        </div>
                     </div>
                 </Link>
 
@@ -17,7 +18,7 @@ function CreateProjectHeader() {
                     <span className='mb-3'>
                         ___
                     </span>
-                    <Link href='/' className=' text-lg font-light'>Dashboard</Link>
+                    <Link href='/' className=' text-md font-light'>Dashboard</Link>
                 </div>
             </div>
         </>

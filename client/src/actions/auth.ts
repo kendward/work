@@ -5,6 +5,7 @@ import {
   IResetPasswordBody,
   ISignInBody,
   ISignUpBody,
+  IVerifyEmailBody,
 } from "../../types/request-body";
 import AuthService from "@/services/auth.service";
 
@@ -21,11 +22,11 @@ export const login = async (
     });
     return { message: "Login Successfully!", error: false };
   } catch (error: any) {
-    let message = "Something went wrong!";
-    if (error?.message?.includes("Read more")) {
-      message = error?.message?.split("Read more")[0];
-    }
-    return { message, error: true };
+    // let message = "Something went wrong!";
+    // if (error?.message?.includes("Read more")) {
+    // message = error?.message?.split("Read more")[0];
+    // }
+    return { message: "Incorrect password!", error: true };
   }
 };
 
@@ -34,6 +35,21 @@ export const register = async (
 ): Promise<Record<string, any>> => {
   try {
     const response = await AuthService.signUp(body);
+    if (response.data.statusCode !== 200) {
+      return { message: response.data.message, error: true };
+    }
+    return { message: "Account created successfully", error: false };
+  } catch (error: any) {
+    console.log("error", error);
+    return { ...error?.response?.data, error: true };
+  }
+};
+
+export const verifyEmail = async (
+  body: IVerifyEmailBody
+): Promise<Record<string, any>> => {
+  try {
+    const response = await AuthService.verifyEmail(body);
     if (response.data.statusCode !== 200) {
       return { message: response.data.message, error: true };
     }
