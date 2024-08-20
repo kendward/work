@@ -5,22 +5,28 @@ import CreateProjectHeader from './create-project-header'
 import ToggleSwitch from '../common/toggle-switch'
 import FrameworkSelector from './framework-selector'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 function CreateProjectForm() {
     const [step, setStep] = useState(1)
     const [selectedPace, setSelectedPace] = useState<"figma" | "creation">('figma');
     const [isToggleOn, setIsToggleOn] = useState<boolean>(false);
-
-    const frameworks = [
-        { id: 'react', name: 'React', logo: '/images/svg/react-logo.svg' },
-        { id: 'vue', name: 'Vue', logo: '/images/svg/vue-logo.svg' },
-        { id: 'angular', name: 'Angular', logo: '/images/svg/angular-logo.svg' },
-        { id: 'blade', name: 'Blade', logo: '/images/svg/blade-logo.svg' },
-    ];
+    const router = useRouter()
+    
+    // const frameworks = [
+    //     { id: 'react', name: 'React', logo: '/images/svg/react-logo.svg' },
+    //     { id: 'vue', name: 'Vue', logo: '/images/svg/vue-logo.svg' },
+    //     { id: 'angular', name: 'Angular', logo: '/images/svg/angular-logo.svg' },
+    //     { id: 'blade', name: 'Blade', logo: '/images/svg/blade-logo.svg' },
+    // ];
 
 
     const handleNext = () => {
-        setStep(step >= 5 ? 5 : step + 1)
+        if(step === 4) {
+            router.push('/')
+        }else{
+            setStep(step + 1)
+        }
     }
 
     const handleBack = () => {
@@ -110,7 +116,7 @@ function CreateProjectForm() {
                         )}
 
                         {/* Step 4 */}
-                        {step === 4 && (
+                        {/* {step === 4 && (
                             <div className="flex flex-col gap-4 w-full">
                                 <h2 className='text-2xl md:text-[34px] font-light'>Select your freamework</h2>
                                 <div className="flex gap-5 mt-8 w-full md:w-[500px]">
@@ -118,10 +124,10 @@ function CreateProjectForm() {
                                         onChange={handleFrameworkChange} />
                                 </div>
                             </div>
-                        )}
+                        )} */}
 
-                        {/* Step 5 */}
-                        {step === 5 && (
+                        {/* Step 4 */}
+                        {step === 4 && (
                             <div className="flex flex-col gap-6">
                                 <h2 className='text-3xl md:text-[34px] font-light leading-10'><span className='relative'>
                                     Your new Klayd is ready!

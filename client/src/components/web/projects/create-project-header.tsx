@@ -9,7 +9,7 @@ function CreateProjectHeader() {
                 <Link href={"/"}>
                     <div className="flex items-center gap-2">
                         <div className='relative w-28 h-10'>
-                        <Image src={"/images/klayd-logo-colored.png"} fill objectFit='cover' alt='logo' />
+                        <Image src={"/images/klayd-logo-colored.png"} fill objectFit='contain' alt='logo' />
                         </div>
                     </div>
                 </Link>
