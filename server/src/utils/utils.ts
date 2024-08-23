@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
 /**
  *  Safe JSON.stringify that handles circular references
  * @param obj  The object to stringify
@@ -43,4 +44,20 @@ export const imageToBase64 = (imagePath) => {
       resolve(base64Image);
     });
   });
+};
+
+/**
+ * Generates a hash token.
+ *
+ * @param {number} [length=32] - The length of the token.
+ * @returns {string} - The hash token.
+ */
+export const generateHashToken = (length: number = 32): string => {
+  try {
+    const resetToken = crypto.randomBytes(length).toString('hex');
+    const hash = crypto.createHash('sha256').update(resetToken).digest('hex');
+    return hash;
+  } catch (error) {
+    console.log(error);
+  }
 };

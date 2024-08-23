@@ -32,6 +32,13 @@ export class ModelRepository<T extends Document> {
     return await this.model.find(filter, options);
   }
 
+  async findOne(
+    filter: FilterQuery<T>,
+    options?: QueryOptions,
+  ): Promise<T | null> {
+    return await this.model.findOne(filter, options);
+  }
+
   async findById(id: string): Promise<T | null> {
     return await this.model.findById(id);
   }

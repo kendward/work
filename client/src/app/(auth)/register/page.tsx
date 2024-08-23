@@ -48,7 +48,7 @@ function RegisterPage() {
       if (res.error) return showError(res.message as string)
       showSuccess(res.message as string);
       setTimeout(() => {
-        router.push(WEB_ROUTES.LOGIN)
+        router.push(`${WEB_ROUTES.LOGIN}?success=Please check your email to verify your account`)
       }, 2000)
     }).catch((err) => {
       showError(err.message)

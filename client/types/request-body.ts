@@ -9,6 +9,9 @@ export interface ISignInBody {
   password: string;
 }
 
+export interface IVerifyAccountBody {
+  token: string;
+}
 export interface IForgotPasswordBody {
   email: string;
 }

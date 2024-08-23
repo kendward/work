@@ -32,6 +32,15 @@ hr {
     border: 1px solid #DDDEDF;
 }
 
+.link_button {
+    padding: 16px 20px 16px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 300;
+    background-color: #4A7BF6;
+    text-decoration: none;
+}
+
 .logo {
     width: 100px;
     height: 100px;
@@ -53,13 +62,15 @@ hr {
     padding: 2rem;
 
 }
-.heading{
+
+.heading {
     margin: 2rem 0;
     font-weight: 400;
     font-size: 2rem;
     color: #282828;
 }
-.welcome{
+
+.welcome {
     width: 100%;
 }
 
@@ -111,14 +122,9 @@ hr {
     padding: 2rem;
     text-align: center;
 }
-.reset_password .link_button{
-    padding: 16px 20px 16px 20px;
-    border-radius: 4px;
-    color: #fff;
-    font-weight: 300;
-    background-color: #4A7BF6;
-    text-decoration: none;
-}
-.reset_password .link_button:hover{
+
+
+
+.reset_password .link_button:hover {
     background-color: #325ece;
 }

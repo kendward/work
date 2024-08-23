@@ -8,6 +8,7 @@ import {
   IResetPasswordBody,
   ISignInBody,
   ISignUpBody,
+  IVerifyAccountBody,
   IVerifyEmailBody,
 } from "../../types/request-body";
 
@@ -20,6 +21,12 @@ export default class AuthService {
 
   static async signUp(body: ISignUpBody): Promise<AxiosResponse<ApiResponse>> {
     return apiService.post(API_ROUTES.AUTH.SIGN_UP, body);
+  }
+
+  static async verifyAccount(
+    body: IVerifyAccountBody
+  ): Promise<AxiosResponse<ApiResponse>> {
+    return apiService.post(`${API_ROUTES.AUTH.VERIFY_ACCOUNT}/${body.token}`);
   }
 
   static async verifyEmail(

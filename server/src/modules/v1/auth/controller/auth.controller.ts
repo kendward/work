@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Req,
@@ -138,6 +139,17 @@ export class AuthController {
     console.log('resetPasswordDto', resetPasswordDto);
     const result = await this.authService.resetPassword(resetPasswordDto);
     return result;
+  }
+
+  @Post('verify-account/:token')
+  @ApiOkResponse({
+    description: 'Verify account of user',
+    type: ResponseOut<any>,
+  })
+  async verifyAccount(
+    @Param('token') token: string,
+  ): Promise<ResponseOut<any>> {
+    return await this.authService.verifyAccount(token);
   }
 
   @Post('logout')

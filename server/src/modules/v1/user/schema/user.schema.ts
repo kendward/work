@@ -7,8 +7,17 @@ import {
 import validator from 'validator';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
-export type UserDocument = HydratedDocument<User>;
 
+export type UserDocument = HydratedDocument<User> & UserMethods;
+
+interface UserMethods {
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string,
+  ): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+  createPasswordResetToken(): string;
+}
 @Schema()
 export class User extends ModelEntity {
   @Prop({
@@ -31,6 +40,12 @@ export class User extends ModelEntity {
     minlength: 8,
   })
   password: string;
+
+  @Prop({ type: Boolean, default: false })
+  verified: boolean;
+
+  @Prop({ type: String })
+  accountVerificationToken: string;
 
   @Prop({ type: mongoose.Schema.Types.Date })
   passwordChangedAt: Date;

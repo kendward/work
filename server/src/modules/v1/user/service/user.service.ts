@@ -25,6 +25,8 @@ export class UserService
   }
 
   async findByEmailAndGetPassword(email: string): Promise<UserDocument | null> {
-    return await this.userModel.findOne({ email }).select('+password');
+    return (await this.userModel
+      .findOne({ email })
+      .select('+password')) as UserDocument | null;
   }
 }

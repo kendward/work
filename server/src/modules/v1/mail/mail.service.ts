@@ -50,12 +50,21 @@ export class MailService {
     }
   }
 
-  async sendWelcomeEmail(to: string | string[], name?: string) {
+  async sendWelcomeEmail({
+    name,
+    email,
+    token,
+  }: {
+    email: string;
+    name: string;
+    token: string;
+  }) {
+    const url = `${this.appConfigService.clientUrl}/verify-account/${token}`;
     return this.sendEmail({
-      to,
+      to: email,
       subject: "You've signed up! Now, get set up",
       template: './welcome',
-      context: { name },
+      context: { name, url },
     });
   }
 

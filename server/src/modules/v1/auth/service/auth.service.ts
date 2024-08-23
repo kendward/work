@@ -33,6 +33,8 @@ import { JwtConfigService } from 'src/modules/config/jwt/jwt-config.service';
 import { UserNotFoundException } from '../../user/exceptions/user.exceptions';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
 import { EmailNotFoundException } from '../exceptions/EmailNotFound';
+import { generateHashToken } from 'src/utils/utils';
+import { AccountNotVerified } from '../exceptions/AccountNotVerified';
 
 @Injectable()
 export class AuthService {
@@ -47,12 +49,14 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user: any = await this.usersService.findOneByEmail(email);
+    const user: UserDocument = await this.usersService.findOneByEmail(email);
     if (!user) return null;
+    if (!user.verified) throw new AccountNotVerified();
     const passwordValid = await user.correctPassword(password, user.password);
     if (!user) {
       throw new NotAcceptableException('could not find the user');
     }
+
     if (user && passwordValid) {
       return user;
     }
@@ -64,6 +68,7 @@ export class AuthService {
     if (!user) {
       throw new EmailNotFoundException();
     }
+    if (!user.verified) throw new AccountNotVerified();
     return {
       statusCode: 200,
       status: 'success',
@@ -74,8 +79,14 @@ export class AuthService {
   async signUp(signupDto: SignUpDTO): Promise<ResponseOut<any>> {
     const user = await this.usersService.findOneByEmail(signupDto.email);
     if (user) throw new UserAlreadyExistsException(signupDto.email);
-    await this.usersService.create(signupDto);
-    await this.mailService.sendWelcomeEmail(signupDto.email, signupDto.name);
+
+    const accountVerificationToken = generateHashToken();
+    await this.usersService.create({ ...signupDto, accountVerificationToken });
+    await this.mailService.sendWelcomeEmail({
+      email: signupDto.email,
+      name: signupDto.name,
+      token: accountVerificationToken,
+    });
     return {
       statusCode: 200,
       status: 'success',
@@ -230,6 +241,24 @@ export class AuthService {
           error?.message,
       );
     }
+  }
+
+  async verifyAccount(token: string): Promise<ResponseOut<any>> {
+    const user: UserDocument = await this.usersService.findOne({
+      accountVerificationToken: token,
+    });
+
+    if (!user) throw new InvalidTokenException();
+
+    user.verified = true;
+    user.accountVerificationToken = undefined;
+    await user.save();
+
+    return {
+      statusCode: HttpStatus.OK,
+      status: 'success',
+      message: 'Account Verified Successfully',
+    };
   }
 
   async resetPassword(

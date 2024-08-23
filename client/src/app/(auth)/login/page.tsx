@@ -7,7 +7,8 @@ import useToaster from '@/hooks/useToaster';
 import { cn } from '@/utils';
 import Image from 'next/image'
 import Link from 'next/link';
-import React, { useState, useTransition } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState, useTransition } from 'react'
 
 function LoginPage() {
 
@@ -22,11 +23,24 @@ function LoginPage() {
 
     // other hooks
     const [isPending, startTransition] = useTransition();
-
+    const searchParams = useSearchParams()
+    const router = useRouter()
 
     // custom hooks
     const { showError, showSuccess } = useToaster()
 
+
+    useEffect(() => {
+        if (searchParams.get('success')) {
+            setMessage(searchParams.get('success') as string)
+            // reset search params
+            router.replace(WEB_ROUTES.LOGIN)
+        }
+        if (searchParams.get('error')) {
+            setError(searchParams.get('error') as string)
+            router.replace(WEB_ROUTES.LOGIN)
+        }
+    }, [searchParams])
 
     /**
      * handle form submission for login
@@ -95,7 +109,7 @@ function LoginPage() {
                 <h4 className='text-2xl font-medium text-center my-4 text-clr-dark-primary'>Sign in Klayd</h4>
 
                 {/* message */}
-                {message && <p className='text-lg my-2 text-clr-dark-primary'>{message}</p>}
+                {message && <p className='text-lg my-2 text-clr-blue-primary'>{message}</p>}
                 {error && <p className='text-md my-3 text-red-600'>{error}</p>}
 
                 {/* error message */}
