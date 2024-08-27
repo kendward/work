@@ -62,7 +62,6 @@ export const {
         session.user = token.user;
         session.expires = token.user.tokens.expiresOn;
       }
-      console.log("session", session);
       return session;
     },
     async jwt({ token, user }: { token: any; user: any }) {

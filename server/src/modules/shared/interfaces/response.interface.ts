@@ -10,7 +10,7 @@ export class ResponseOut<T> {
     example: 'success',
     description: 'Status of the response',
   })
-  status: string;
+  status?: string;
   @ApiProperty({
     example: 'Message of the response',
     description: 'Message of the response',

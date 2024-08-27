@@ -17,3 +17,9 @@ export class UnauthorizedException extends HttpException {
     super('Unauthorized', HttpStatus.UNAUTHORIZED);
   }
 }
+
+export class IncorrectPasswordException extends HttpException {
+  constructor() {
+    super('Incorrect Password', HttpStatus.BAD_REQUEST);
+  }
+}

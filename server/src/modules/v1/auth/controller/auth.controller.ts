@@ -21,7 +21,7 @@ import {
   VerifyEmailDTO,
 } from '../dto/auth.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { ResponseOut } from 'src/modules/common/interfaces/response.interface';
+import { ResponseOut } from 'src/modules/shared/interfaces/response.interface';
 import { SignInResponse } from '../interfaces/login.interface';
 import { ForgotPwdResponse } from '../interfaces/forgot-pwd.interface';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -136,7 +136,6 @@ export class AuthController {
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDTO,
   ): Promise<ResponseOut<any>> {
-    console.log('resetPasswordDto', resetPasswordDto);
     const result = await this.authService.resetPassword(resetPasswordDto);
     return result;
   }

@@ -15,7 +15,6 @@ import { EmailConfigService } from './email-config.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        console.log(111, join(__dirname, '../../v1/mail/templates'));
         return {
           transport: {
             host: configService.get<string>('email.host'),

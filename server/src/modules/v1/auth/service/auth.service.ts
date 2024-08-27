@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   NotAcceptableException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { Response } from 'express';
 import * as crypto from 'crypto';
 import { UserService } from '../../user/service/user.service';
 import { JwtStrategy } from '../strategies/jwt.strategy';
-import { ResponseOut } from 'src/modules/common/interfaces/response.interface';
+import { ResponseOut } from 'src/modules/shared/interfaces/response.interface';
 import {
   ForgotPwdDTO,
   RefreshTokenResponse,
@@ -35,17 +36,22 @@ import { InvalidTokenException } from '../exceptions/InvalidTokenException';
 import { EmailNotFoundException } from '../exceptions/EmailNotFound';
 import { generateHashToken } from 'src/utils/utils';
 import { AccountNotVerified } from '../exceptions/AccountNotVerified';
+import { OrganizationService } from '../../organization/service/organization.service';
+import { ROLES } from '../../organization/constants';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(Services.USERS) private readonly usersService: UserService,
     @Inject(Services.MAIL) private readonly mailService: MailService,
+    @Inject(Services.ORGANIZATION)
+    private readonly organizationService: OrganizationService,
     @Inject(Services.APP_CONFIG)
     private readonly appConfigService: AppConfigService,
     @Inject(Services.TOKEN) private readonly tokenService: TokenService,
     private readonly jwtConfigService: JwtConfigService,
     private readonly jwtStrategy: JwtStrategy,
+    private readonly logger: Logger,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -80,8 +86,39 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(signupDto.email);
     if (user) throw new UserAlreadyExistsException(signupDto.email);
 
+    signupDto.role = ROLES.ADMIN; // Assign admin role
+
     const accountVerificationToken = generateHashToken();
-    await this.usersService.create({ ...signupDto, accountVerificationToken });
+    const newUser = await this.usersService.create({
+      ...signupDto,
+      accountVerificationToken,
+    });
+    // create organization for user
+    try {
+      const roles = Object.values(ROLES).map((role) => ({ name: role }));
+      const organization = await this.organizationService.createOrganization({
+        email: signupDto.email,
+        owner: newUser.id,
+        roles,
+      });
+      await this.usersService.updateOne(
+        {
+          _id: newUser.id,
+        },
+        {
+          $set: {
+            organization: organization.id,
+          },
+        },
+      );
+    } catch (err) {
+      this.logger.error(err);
+      await this.usersService.deleteOne({
+        _id: newUser.id,
+      });
+
+      throw new BadRequestException('Organization creation failed');
+    }
     await this.mailService.sendWelcomeEmail({
       email: signupDto.email,
       name: signupDto.name,

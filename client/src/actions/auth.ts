@@ -30,7 +30,7 @@ export const login = async (
   }
 };
 
-export const register = async (
+export const registerAction = async (
   body: ISignUpBody
 ): Promise<Record<string, any>> => {
   try {

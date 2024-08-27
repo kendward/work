@@ -24,7 +24,6 @@ export default auth(async (req) => {
     try {
       const token = nextUrl.pathname.split("/").pop() as string;
       const response = await AuthService.verifyAccount({ token });
-      console.log("response", response);
       if (response?.data?.statusCode === 200) {
         return Response.redirect(
           new URL(

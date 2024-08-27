@@ -1,25 +1,25 @@
 "use client";
-import { register } from '@/actions/auth';
+import { registerAction } from '@/actions/auth';
 import Button from '@/components/web/common/button'
 import Checkbox from '@/components/web/common/checkbox';
 import Input from '@/components/web/common/Input'
 import { WEB_ROUTES } from '@/constants/pages-routes';
 import useToaster from '@/hooks/useToaster';
+import { RegisterFormValues, RegisterSchema } from '@/schema/auth';
 import AuthService from '@/services/auth.service';
 import { cn } from '@/utils';
 import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState, useTransition } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import InputMessageBox from '@/components/web/common/input-message-box';
 
 function RegisterPage() {
 
   // use state hooks
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
     acceptPolicy: false,
     keepMeUpdated: false
   })
@@ -31,20 +31,29 @@ function RegisterPage() {
   // custom hooks
   const { showSuccess, showError } = useToaster()
 
+
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<RegisterFormValues>(
+    { resolver: zodResolver(RegisterSchema) });
+
+
   /**
    * handle form submission for registration
    * @param e  form event
    * @returns  void
    */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const onSubmit = async (data: RegisterFormValues) => {
 
-    if (formData.password !== formData.confirmPassword) {
-      showError('Passwords do not match')
-      return
-    }
+    // if (formData.password !== formData.confirmPassword) {
+    //   showError('Passwords do not match')
+    //   return
+    // }
 
-    startTransition(() => register(formData).then((res) => {
+    startTransition(() => registerAction(data).then((res) => {
       if (res.error) return showError(res.message as string)
       showSuccess(res.message as string);
       setTimeout(() => {
@@ -72,24 +81,33 @@ function RegisterPage() {
     <div className='flex-1 flex justify-center items-center w-full h-full'>
 
       {/* Register Form */}
-      <form className='w-full md:w-1/2 lg:w-[400px] p-2 lg:p-8 flex flex-col items-center mb-10 text-center' onSubmit={handleSubmit}>
+      <form className='w-full md:w-1/2 lg:w-[400px] p-2 lg:p-8 flex flex-col items-center mb-10 text-center' onSubmit={handleSubmit(onSubmit)}>
 
         {/* logo */}
-        <Image src='/images/logo.png' width={72.4} height={72.4} alt='logo' className='mb-6' />
+        <Image src='/images/logo.png' width={72.4} height={72.4} alt='logo' className='mb-5' />
 
         {/* heading */}
         <h4 className='text-2xl font-medium text-center my-4 text-clr-dark-primary'>Create an Account</h4>
 
         {/* name field */}
-        <Input type='text' name="name" placeholder='Your Name' value={formData.name} onChange={handleChange} className='my-2' />
-
-        <Input type='text' name="email" placeholder='E-mail Address' value={formData.email} onChange={handleChange} className='my-2' />
-
+        <div className="relative w-full">
+          <Input type='text' name="name" placeholder='Your Name' onChange={handleChange} className='my-2' register={register} />
+          {errors.name && <div className='mb-5'><InputMessageBox message={errors.name.message} /></div>}
+        </div>
+        <div className="relative w-full">
+          <Input type='email' name="email" placeholder='E-mail Address' onChange={handleChange} className='my-2' register={register} />
+          {errors.email && <div className='mb-5'><InputMessageBox message={errors.email.message} /></div>}
+        </div>
         {/* password field */}
-        <Input type='password' name='password' placeholder='Password' value={formData.password} onChange={handleChange} className='my-2' />
-
+        <div className="relative w-full">
+          <Input type='password' name='password' placeholder='Password' onChange={handleChange} className='my-2' register={register} />
+          {errors.password && <div className='mb-5'><InputMessageBox message={errors.password.message} /></div>}
+        </div>
         {/* confirm password field */}
-        <Input type='password' name='confirmPassword' placeholder='Confirm Password' value={formData.confirmPassword} onChange={handleChange} className='my-2' />
+        <div className="relative w-full">
+          <Input type='password' name='confirmPassword' placeholder='Confirm Password' onChange={handleChange} className='my-2' register={register} />
+          {errors.confirmPassword && <div className='mb-5'><InputMessageBox message={errors.confirmPassword.message} /></div>}
+        </div>
 
 
         {/* terms and conditions */}

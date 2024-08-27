@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtService } from '@nestjs/jwt';
 import { Request as RequestType } from 'express';
 import { JwtConfigService } from 'src/modules/config/jwt/jwt-config.service';
 import { AuthJwtPayload } from '../interfaces/jwt.interface';
+import { Services } from 'src/modules/utils/constants';
+import { UserService } from '../../user/service/user.service';
+import { UserDocument } from '../../user/schema/user.schema';
 
 /**
  * JWT Strategy class to validate JWT token
@@ -15,6 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly jwtConfigService: JwtConfigService,
     private jwtService: JwtService,
+    @Inject(Services.USERS) private readonly userService: UserService,
   ) {
     // Call the parent class constructor with the options
     super({
@@ -36,7 +40,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns  JWT token from request object or null
    */
   private static extractJWT(req: RequestType): string | null {
-    console.log(req.cookies);
     if (req.cookies && 'jwt' in req.cookies) {
       return req.cookies.jwt;
     }
@@ -74,9 +77,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @param payload  Payload from JWT token
    * @returns  payload
    */
-  validate(payload: any) {
-    console.log('Inside JWT Strategy Validate');
-    // console.log(payload);
-    return payload;
+  async validate(payload: AuthJwtPayload): Promise<UserDocument> {
+    return await this.userService.findOneById(payload.id);
   }
 }

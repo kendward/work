@@ -22,7 +22,7 @@ export class ModelEntity {
   })
   _id: ObjectId;
 
-  @Prop({ type: String, default: 'Anonymous' })
+  @Prop({ type: String })
   createdBy: string;
 
   @Prop({ type: mongoose.Schema.Types.Date, default: () => new Date() })

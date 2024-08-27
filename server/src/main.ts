@@ -19,7 +19,7 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import * as compression from 'compression';
 import { AppModule } from './modules/app.module';
-import { HttpExceptionFilter } from './modules/common/filters/http-exception.filter';
+import { HttpExceptionFilter } from './modules/shared/filters/http-exception.filter';
 import {
   NestjsWinstonLoggerService,
   appendRequestIdToLogger,
@@ -27,7 +27,7 @@ import {
   appendIdToRequest,
 } from 'nestjs-winston-logger';
 import { format, transports } from 'winston';
-import { setupSwagger } from './modules/common/swagger';
+import { setupSwagger } from './modules/shared/swagger';
 import { APP_ENV } from './modules/utils/constants';
 import { ExpressSessionConfigService } from './modules/config/session/session.service';
 

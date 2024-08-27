@@ -57,7 +57,13 @@ function LoginPage() {
 
         if (!showPasswordField) {
             startTransition(() => verifyEmail({ email: formData.email }).then((res) => {
-                if (res.error) return showError(res.message as string)
+                if (res.error) {
+                    showError(res.message as string)
+                    setTimeout(() => {
+                        router.replace(WEB_ROUTES.REGISTER)
+                    }, 2000)
+                    return
+                }
                 setMessage("Enter password for " + formData.email)
                 setShowPasswordField(true)
             }).catch((err) => {

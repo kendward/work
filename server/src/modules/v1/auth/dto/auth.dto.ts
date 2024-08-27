@@ -42,6 +42,8 @@ export class SignUpDTO {
   @MaxLength(20)
   @IsStrongPassword({}, { message: 'Password must be a strong password' })
   password: string;
+
+  role: string;
 }
 
 export class SignInDTO {

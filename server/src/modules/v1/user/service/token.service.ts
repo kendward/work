@@ -3,12 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Token, TokenDocument } from '../schema/token.schema';
 import { Model } from 'mongoose';
 import { ITokenService } from '../interface/token';
+import { ModelRepository } from 'src/modules/shared/model/model.repository';
 
 @Injectable()
-export class TokenService implements ITokenService {
+export class TokenService
+  extends ModelRepository<TokenDocument>
+  implements ITokenService
+{
   constructor(
     @InjectModel(Token.name) private readonly tokenModel: Model<TokenDocument>,
-  ) {}
+  ) {
+    super(tokenModel);
+  }
 
   /**
    * Saves the refresh token for a user.

@@ -47,8 +47,13 @@ export class ModelRepository<T extends Document> {
     return await this.model.find();
   }
 
-  async remove(filter: FilterQuery<T>): Promise<RemovedModel> {
+  async deleteMany(filter: FilterQuery<T>): Promise<RemovedModel> {
     const { deletedCount } = await this.model.deleteMany(filter);
+    return { deletedCount, deleted: !!deletedCount };
+  }
+
+  async deleteOne(filter: FilterQuery<T>): Promise<RemovedModel> {
+    const { deletedCount } = await this.model.deleteOne(filter);
     return { deletedCount, deleted: !!deletedCount };
   }
 

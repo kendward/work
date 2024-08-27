@@ -3,10 +3,11 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import {
   ModelEntity,
   ModelEntitySchema,
-} from 'src/modules/common/model/model.entity';
+} from 'src/modules/shared/model/model.entity';
 import validator from 'validator';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
+import { Organization } from '../../organization/schema/organization.schema';
 
 export type UserDocument = HydratedDocument<User> & UserMethods;
 
@@ -56,11 +57,20 @@ export class User extends ModelEntity {
   @Prop({ type: mongoose.Schema.Types.Date })
   passwordResetExpires: Date;
 
+  @Prop({ type: Boolean, default: false })
+  receiveUpdates: boolean;
+
   @Prop({
     type: Boolean,
     default: true,
   })
   active: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Organization' })
+  organization: Organization;
+
+  @Prop({ type: String })
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
