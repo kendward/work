@@ -6,6 +6,7 @@ interface ToggleSwitchProps {
     offColor?: string;
     onChange?: (isOn: boolean) => void;
     label?: string;
+    hideLabel?: boolean;
 }
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
@@ -13,6 +14,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     onColor = 'bg-blue-500',
     offColor = 'bg-gray-300',
     label,
+    hideLabel,
     onChange,
 }) => {
     const [toggle, setToggle] = useState<boolean>(isOn);
@@ -26,13 +28,13 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
 
     return (
         <div className="flex items-center">
-            <span className="mr-2">{label || toggle ? 'On' : 'Off'}</span>
+            {!hideLabel && <span className="mr-2">{label ? label : toggle ? 'On' : 'Off'}</span>}
             <div
-                className={`relative inline-block w-11 h-6 rounded-full cursor-pointer transition-colors duration-300 ease-in-out ${toggle ? onColor : offColor}`}
+                className={`relative inline-block w-[50px] h-6 rounded-full cursor-pointer transition-colors duration-300 ease-in-out ${toggle ? onColor : offColor}`}
                 onClick={handleToggle}
             >
                 <div
-                    className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${toggle ? 'translate-x-5' : ''}`}
+                    className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${toggle ? 'translate-x-[26.5px]' : ''}`}
                 ></div>
             </div>
         </div>

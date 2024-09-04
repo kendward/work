@@ -2,7 +2,6 @@ import CreateProjectCard from '@/components/web/projects/create-project-card'
 import ProjectsHeader from '@/components/web/projects/header'
 import ProjectCard from '@/components/web/projects/project-card'
 import Link from 'next/link'
-import React from 'react'
 
 function page() {
   return (

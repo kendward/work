@@ -40,7 +40,6 @@ export const registerAction = async (
     }
     return { message: "Account created successfully", error: false };
   } catch (error: any) {
-    console.log("error", error);
     return { ...error?.response?.data, error: true };
   }
 };
@@ -55,7 +54,6 @@ export const verifyEmail = async (
     }
     return { message: "Account created successfully", error: false };
   } catch (error: any) {
-    console.log("error", error);
     return { ...error?.response?.data, error: true };
   }
 };
@@ -78,7 +76,6 @@ export const resetPassword = async (
     await AuthService.resetPassword(body);
     return { message: "Password changed!", error: false };
   } catch (error: any) {
-    console.log("error", error?.response?.data);
     return { ...error?.response?.data, error: true };
   }
 };

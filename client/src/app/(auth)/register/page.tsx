@@ -6,8 +6,7 @@ import Input from '@/components/web/common/Input'
 import { WEB_ROUTES } from '@/constants/pages-routes';
 import useToaster from '@/hooks/useToaster';
 import { RegisterFormValues, RegisterSchema } from '@/schema/auth';
-import AuthService from '@/services/auth.service';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
