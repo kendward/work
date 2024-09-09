@@ -48,7 +48,7 @@ export class SignUpDTO {
 
 export class SignInDTO {
   @ApiProperty({
-    example: 'example@email.com',
+    example: 'zeeshanaliryk18@gmail.com',
     description: 'The email of the user',
     required: true,
   })
@@ -58,7 +58,7 @@ export class SignInDTO {
   email: string;
 
   @ApiProperty({
-    example: 'password123',
+    example: 'Zeeshan@123',
     description: 'The password of the user',
     required: true,
   })

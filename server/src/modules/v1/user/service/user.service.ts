@@ -1,18 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { User, UserDocument } from '../schema/user.schema';
-import { IUserService } from '../interface/user';
+import { IGetCurrentUser, IUserService } from '../interface/user';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ModelRepository } from 'src/modules/shared/model/model.repository';
 import {
   ChangePasswordDto,
   ReceiveNotificationStatusDto,
+  UpdateProfileDto,
 } from '../dto/user.dto';
 import { ResponseOut } from 'src/modules/shared/interfaces/response.interface';
 import {
   IncorrectPasswordException,
   UserNotFoundException,
 } from '../exceptions/user.exceptions';
+import {
+  Organization,
+  OrganizationDocument,
+} from '../../organization/schema/organization.schema';
 
 @Injectable()
 export class UserService
@@ -20,9 +25,57 @@ export class UserService
   implements IUserService
 {
   constructor(
+    @InjectModel(Organization.name)
+    private readonly organizationModel: Model<OrganizationDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {
     super(userModel);
+  }
+
+  async getCurrentUserInfo(query: IGetCurrentUser): Promise<any> {
+    const user = await this.userModel
+      .findOne(
+        {
+          _id: query.id,
+          organization: query.organization,
+        },
+        {
+          name: 1,
+          email: 1,
+          receiveUpdates: 1,
+          organization: 1,
+          _id: 0,
+        },
+      )
+      .populate({
+        path: 'organization',
+        model: Organization.name,
+        select: 'email billingInformation -_id',
+      })
+      .lean();
+    return {
+      ...user,
+    };
+  }
+  async updateProfile(body: UpdateProfileDto): Promise<ResponseOut<any>> {
+    await this.userModel.updateOne(
+      {
+        _id: body.userId,
+        organization: body.organization,
+      },
+      {
+        $set: {
+          name: body.name,
+          email: body.email,
+        },
+      },
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      status: 'success',
+      message: 'Profile updated successfully',
+    };
   }
 
   async findOneByEmail(email: string): Promise<UserDocument> {

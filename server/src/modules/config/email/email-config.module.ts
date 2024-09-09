@@ -4,8 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import emailConfig from './email.config';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-// import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { EmailConfigService } from './email-config.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,19 +14,19 @@ import { EmailConfigService } from './email-config.service';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         return {
           transport: {
-            host: configService.get<string>('email.host'),
-            // port: configService.get<number>('email.port'),
+            host: 'smtp.sendgrid.net',
+            port: 587,
             secure: false,
             auth: {
-              user: configService.get<string>('email.user'),
-              pass: configService.get<string>('email.pass'),
+              user: 'apikey',
+              pass: configService.get<string>('SENDGRID_API_KEY'),
             },
           },
           defaults: {
-            from: configService.get<string>('email.from'),
+            from: configService.get<string>('email.from'), // Default "from" address
           },
           template: {
             dir: join(__dirname, '../../v1/mail/templates'),
@@ -35,14 +35,6 @@ import { EmailConfigService } from './email-config.service';
               strict: true,
             },
           },
-          // options: {
-          //   partials: {
-          //     dir: join(process.cwd(), 'src/modules/v1/mail/templates/partials'),
-          //     options: {
-          //       strict: true,
-          //     },
-          //   },
-          // },
         };
       },
     }),

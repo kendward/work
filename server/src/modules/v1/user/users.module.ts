@@ -6,6 +6,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/user.schema';
 import { Token, TokenSchema } from './schema/token.schema';
 import { TokenService } from './service/token.service';
+import {
+  Organization,
+  OrganizationSchema,
+} from '../organization/schema/organization.schema';
 
 @Module({
   imports: [
@@ -17,6 +21,10 @@ import { TokenService } from './service/token.service';
       {
         name: Token.name,
         schema: TokenSchema,
+      },
+      {
+        name: Organization.name,
+        schema: OrganizationSchema,
       },
     ]),
   ],
