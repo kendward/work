@@ -64,8 +64,29 @@ export const {
       }
       return session;
     },
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({
+      token,
+      user,
+      session,
+      trigger,
+    }: {
+      token: any;
+      user: any;
+      session?: any;
+      trigger?: string;
+    }) {
       if (!token.sub) return token;
+      if (trigger === "update") {
+        if (session) {
+          token.user = { ...token.user, ...session };
+          if (session?.name) {
+            token.name = session.name;
+          }
+          if (session?.email) {
+            token.email = session.email;
+          }
+        }
+      }
       if (user) {
         token.user = user;
         if (user.tokens?.expiresOn) {

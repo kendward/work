@@ -1,3 +1,4 @@
+import { cn } from '@/utils';
 import React from 'react';
 
 interface InputProps {
@@ -30,7 +31,8 @@ const Input: React.FC<InputProps> = ({
             placeholder={placeholder}
             value={value}
             onChange={onChange}
-            className={`px-4 py-4 w-full text-md font-semibold placeholder:font-normal text-clr-dark-secondary rounded-md border-1 border-clr-light-gray outline-none ${className}`}
+            className={cn(`px-4 py-4 w-full text-md font-semibold placeholder:font-normal text-clr-dark-secondary rounded-md border-1 border-clr-light-gray focus:border-black outline-none`,
+                className)}
             disabled={disabled}
             {...props}
             {...register(name)}
@@ -42,7 +44,8 @@ const Input: React.FC<InputProps> = ({
             placeholder={placeholder}
             value={value}
             onChange={onChange}
-            className={`px-4 py-4 w-full text-md font-semibold placeholder:font-normal text-clr-dark-secondary rounded-md border-1 border-clr-light-gray outline-none ${className}`}
+            className={cn(`px-4 py-4 w-full text-md font-semibold placeholder:font-normal text-clr-dark-secondary rounded-md border-1 border-clr-light-gray focus:border-black outline-none`,
+                className)}
             disabled={disabled}
             {...props}
         />

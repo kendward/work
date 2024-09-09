@@ -23,11 +23,11 @@ export const RegisterSchema = z
       .string()
       .min(6, { message: "Password must be at least 6 characters long." }),
     confirmPassword: z.string().min(1, {
-      message: "Confirm Password is required",
+      message: "Confirm password is required",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Password Didn't match!",
+    message: "The password dose not match.",
     path: ["confirmPassword"],
   });
 

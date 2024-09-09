@@ -4,7 +4,6 @@ import Button from '@/components/web/common/button'
 import Checkbox from '@/components/web/common/checkbox';
 import Input from '@/components/web/common/Input'
 import { WEB_ROUTES } from '@/constants/pages-routes';
-import useToaster from '@/hooks/useToaster';
 import { RegisterFormValues, RegisterSchema } from '@/schema/auth';
 import { cn } from '@/lib/utils';
 import Image from 'next/image'
@@ -14,6 +13,9 @@ import React, { useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import InputMessageBox from '@/components/web/common/input-message-box';
+import SuccessMessage from '@/components/web/common/SuccessMessage';
+import ErrorMessage from '@/components/web/common/ErrorMessage';
+import useMessage from '@/hooks/useMessage';
 
 function RegisterPage() {
 
@@ -28,7 +30,8 @@ function RegisterPage() {
   const router = useRouter()
 
   // custom hooks
-  const { showSuccess, showError } = useToaster()
+  const { error, success, setErrorMessage, setSuccessMessage, clearMessages } = useMessage();
+
 
 
 
@@ -47,19 +50,19 @@ function RegisterPage() {
    */
   const onSubmit = async (data: RegisterFormValues) => {
 
-    // if (formData.password !== formData.confirmPassword) {
-    //   showError('Passwords do not match')
-    //   return
-    // }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(data.password)) {
+      return setErrorMessage('Password must contain at least one uppercase letter, one lowercase letter and one number')
+    }
 
     startTransition(() => registerAction(data).then((res) => {
-      if (res.error) return showError(res.message as string)
-      showSuccess(res.message as string);
+      if (res.error) return setErrorMessage(res.message as string)
+      setSuccessMessage(res.message as string);
       setTimeout(() => {
         router.push(`${WEB_ROUTES.LOGIN}?success=Please check your email to verify your account`)
       }, 2000)
     }).catch((err) => {
-      showError(err.message)
+      setErrorMessage(err.message)
     }));
   }
 
@@ -83,10 +86,14 @@ function RegisterPage() {
       <form className='w-full md:w-1/2 lg:w-[400px] p-2 lg:p-8 flex flex-col items-center mb-10 text-center' onSubmit={handleSubmit(onSubmit)}>
 
         {/* logo */}
-        <Image src='/images/logo.png' width={72.4} height={72.4} alt='logo' className='mb-5' />
+        <Image src='/images/svg/klayd-logo-circle.svg' width={72.4} height={72.4} alt='logo' className='mb-5' />
 
         {/* heading */}
         <h4 className='text-2xl font-medium text-center my-4 text-clr-dark-primary'>Create an Account</h4>
+
+        {/* Messages */}
+        <SuccessMessage message={success} className='mt-2 mb-6 text-xl' />
+        <ErrorMessage message={error} className='text-sm mt-2 mb-6' />
 
         {/* name field */}
         <div className="relative w-full">
@@ -122,7 +129,7 @@ function RegisterPage() {
         <Button type='submit' className={cn("mt-2", isPending ? "bg-blue-800" : "")} disabled={isPending || !formData.acceptPolicy}>Register</Button>
 
         {/* already have an account */}
-        <p className='text-md mt-6 font-semibold'>Already have an Klayd account? <Link href='/login' className='text-clr-blue-primary'>Sign in</Link></p>
+        <p className='text-sm mt-10 font-medium'>Already have an Klayd account? <Link href='/login' className='text-clr-blue-primary'>Sign in</Link></p>
       </form>
     </div>
   )

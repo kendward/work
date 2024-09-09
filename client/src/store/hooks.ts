@@ -7,3 +7,7 @@ export const useLayout = () => {
 export const useTab = () => {
   return useAppSelector((state) => state.tab);
 };
+
+export const useUser = () => {
+  return useAppSelector((state) => state.user);
+};

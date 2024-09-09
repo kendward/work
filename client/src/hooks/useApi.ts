@@ -12,16 +12,19 @@ interface ApiHookParams {
   config?: AxiosRequestConfig;
 }
 
-export default function useApi({ key, method, config, url }: ApiHookParams) {
+// Add a generic type T for the expected response type
+export default function useApi<T>({ key, method, config, url }: ApiHookParams) {
   const queryClient = new QueryClient();
+
   switch (method) {
     case "GET":
       // eslint-disable-next-line
-      const get = useQuery({
+      const get = useQuery<T>({
         queryKey: key,
-        queryFn: () =>
-          (async () =>
-            await apiService.get(url, config).then((res) => res.data))(),
+        queryFn: async () => {
+          const response = await apiService.get<T>(url, config);
+          return response.data; // response is now typed as T
+        },
         retry: 0,
       });
 
@@ -29,23 +32,26 @@ export default function useApi({ key, method, config, url }: ApiHookParams) {
 
     case "POST":
       // eslint-disable-next-line
-      const post = useMutation({
-        mutationFn: (obj: any) =>
-          (async () =>
-            await apiService.post(url, obj, config).then((res) => res.data))(),
+      const post = useMutation<T, any, any>({
+        mutationFn: async (obj: any) => {
+          const response = await apiService.post<T>(url, obj, config);
+          return response.data;
+        },
         retry: 0,
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: key });
         },
       });
+
       return { post };
 
     case "PUT":
       // eslint-disable-next-line
-      const put = useMutation({
-        mutationFn: (obj: any) =>
-          (async () =>
-            await apiService.put(url, obj, config).then((res) => res.data))(),
+      const put = useMutation<T, any, any>({
+        mutationFn: async (obj: any) => {
+          const response = await apiService.put<T>(url, obj, config);
+          return response.data;
+        },
         retry: 0,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: key }),
       });
@@ -54,10 +60,11 @@ export default function useApi({ key, method, config, url }: ApiHookParams) {
 
     case "PATCH":
       // eslint-disable-next-line
-      const patch = useMutation({
-        mutationFn: (obj: any) =>
-          (async () =>
-            await apiService.patch(url, obj, config).then((res) => res.data))(),
+      const patch = useMutation<T, any, any>({
+        mutationFn: async (obj: any) => {
+          const response = await apiService.patch<T>(url, obj, config);
+          return response.data;
+        },
         retry: 0,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: key }),
       });
@@ -66,14 +73,17 @@ export default function useApi({ key, method, config, url }: ApiHookParams) {
 
     case "DELETE":
       // eslint-disable-next-line
-      const deleteObj = useMutation({
-        mutationFn: () =>
-          (async () =>
-            await apiService.delete(url, config).then((res) => res.data))(),
+      const deleteObj = useMutation<T>({
+        mutationFn: async () => {
+          const response = await apiService.delete<T>(url, config);
+          return response.data;
+        },
         retry: 0,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: key }),
       });
+
       return { deleteObj };
+
     default:
       throw new Error(`Invalid method ${method}`);
   }

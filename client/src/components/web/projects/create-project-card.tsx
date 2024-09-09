@@ -4,7 +4,7 @@ import React from 'react'
 
 function CreateProjectCard() {
   return (
-    <div className='w-96 sm:min-w-[330px]  sm:max-w-[330px] relative bg-[url("/images/project-background.png")] h-[435px] bg-no-repeat bg-cover rounded-lg  flex justify-center items-center gap-16 flex-col'>
+    <div className='w-full  md:max-w-[330px] flex-1 relative bg-[url("/images/project-background.png")] h-[435px] bg-no-repeat bg-cover rounded-lg  flex justify-center items-center gap-16 flex-col'>
       <Link href={"/create-project"}>
         <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#2655F5] text-white cursor-pointer">
           <Plus size={18} />

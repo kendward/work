@@ -11,4 +11,14 @@ export const API_ROUTES = {
     REFRESH_TOKEN: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
   },
+  USER: {
+    GET_CURRENT_USER_INFO: "/User/GetCurrentUserInfo",
+    UPDATE_PROFILE: "/User/UpdateProfile",
+    CHANGE_PASSWORD: "/User/ChangePassword",
+    RECEIVE_NOTIFICATIONS: "/User/ReceiveNotificationsStatus",
+  },
+  ORGANIZATION: {
+    SAVE_BILLING_INFO: "/Organization/SaveBillingInformation",
+    DELETE_ACCOUNT: "/Organization/DeleteAccount",
+  },
 };
